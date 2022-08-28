@@ -1,6 +1,7 @@
 import 'dart:convert';
+import 'dart:ffi';
 
-import 'package:graphql_app/model/person_model.dart';
+import 'package:graphql_app/model/data_model.dart';
 import 'package:graphql_app/query.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
@@ -10,23 +11,70 @@ class GraphqlService {
     cache: GraphQLCache(),
   );
 
-  Future<List<PersonModel>> getAllUsers() async {
-    QueryResult queryResult = await client.query(
-      QueryOptions(
-        cacheRereadPolicy: CacheRereadPolicy.ignoreOptimisitic,
-        document: gql(
-          getAllUsersQuery,
+  Future<DataModel> getAllPerson() async {
+    try {
+      QueryResult queryResult = await client.query(
+        QueryOptions(
+          cacheRereadPolicy: CacheRereadPolicy.ignoreOptimisitic,
+          document: gql(
+            getAllUsersQuery,
+          ),
         ),
-      ),
-    );
+      );
+      DataModel data = DataModel.fromJson(queryResult.data!);
+      return data;
+    } catch (e) {
+      throw e;
+    }
+  }
 
-    Map<String,dynamic> StringResponse = queryResult.data!['persons'];
-    print(StringResponse.length);
-    print("testtttttt     ");
-    print(queryResult.data!['persons']);
-    List<PersonModel>? persons;
-    persons?.add(
-        PersonModel( typename: 'test',name: 'test', lastName: 'test', age: 5));
-    return persons!;
+  Future<void> addPerson(
+      String id, String name, String lastName, int age) async {
+    try {
+      await client.mutate(
+        MutationOptions(
+          cacheRereadPolicy: CacheRereadPolicy.ignoreOptimisitic,
+          document: gql(
+            addPersonQuery(id, name, lastName, age),
+          ),
+        ),
+      );
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<void> editPerson(
+      String id, String name, String lastName, int age) async {
+    try {
+      QueryResult queryResult = await client.mutate(
+        MutationOptions(
+          cacheRereadPolicy: CacheRereadPolicy.ignoreOptimisitic,
+          document: gql(
+            editPersonQuery(id, name, lastName, age),
+          ),
+        ),
+      );
+      if (queryResult.hasException) {
+        print(queryResult.exception);
+      }
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<void> detelePerson(String id) async {
+    try {
+      await client.mutate(
+        MutationOptions(
+          cacheRereadPolicy: CacheRereadPolicy.ignoreOptimisitic,
+          document: gql(
+            deletePersonQuery(id),
+          ),
+        ),
+      );
+    } catch (e) {
+      throw e;
+    }
   }
 }
