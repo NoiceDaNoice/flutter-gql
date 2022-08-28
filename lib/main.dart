@@ -15,21 +15,7 @@ flutter version 3.0.2
 emulator android API 30
  */
 void main() {
-  final HttpLink httpLink =
-      HttpLink('https://examplegraphql.herokuapp.com/graphql');
-  ValueNotifier<GraphQLClient> client = ValueNotifier(
-    GraphQLClient(
-      link: httpLink,
-      cache: GraphQLCache(store: InMemoryStore()),
-    ),
-  );
-
-  var app = GraphQLProvider(
-    client: client,
-    child: const MyApp(),
-  );
-
-  runApp(app);
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
