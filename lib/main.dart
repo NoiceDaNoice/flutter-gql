@@ -11,6 +11,8 @@ import 'cubit/query/graphql_query_cubit.dart';
 /*
 Gary Adam
 https://www.linkedin.com/in/garyadam1234/ 
+flutter version 3.0.2
+emulator android API 30
  */
 void main() {
   final HttpLink httpLink =
